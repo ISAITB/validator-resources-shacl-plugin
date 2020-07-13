@@ -2,19 +2,41 @@ package eu.europa.ec.itb.shacl.plugin;
 
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.UUID;
+
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.RestoreAction;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.NodeIterator;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.ResIterator;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFLanguages;
+import org.apache.jena.shacl.Shapes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.topbraid.jenax.util.JenaUtil;
 
 import com.gitb.core.AnyContent;
-import com.gitb.core.Metadata;
 import com.gitb.core.ValidationModule;
-import com.gitb.core.ValueEmbeddingEnumeration;
+import com.gitb.tr.BAR;
+import com.gitb.tr.ObjectFactory;
+import com.gitb.tr.TAR;
+import com.gitb.tr.TestAssertionGroupReportsType;
+import com.gitb.tr.TestResultType;
+import com.gitb.tr.ValidationCounters;
 import com.gitb.vs.GetModuleDefinitionResponse;
 import com.gitb.vs.ValidateRequest;
 import com.gitb.vs.ValidationResponse;
@@ -25,42 +47,61 @@ import eu.europa.ec.itb.shacl.plugin.error.PluginException;
 import eu.europa.ec.itb.shacl.plugin.utils.PluginConstants;
 
 public class ValidationServiceShaclPlugin implements ValidationService{
-
+    private static final Logger LOG = LoggerFactory.getLogger(ValidationServiceShaclPlugin.class);
+    
 	public ValidationServiceShaclPlugin() {
 		super();
 	}
 
 	public GetModuleDefinitionResponse getModuleDefinition(Void parameters) {
         GetModuleDefinitionResponse response = new GetModuleDefinitionResponse();
-        String id = "SHACL shapes Plugin";
         
         response.setModule(new ValidationModule());
-        response.getModule().setId(id);
-        response.getModule().setOperation("V");
-        response.getModule().setMetadata(new Metadata());
-        response.getModule().getMetadata().setName(id);
-        response.getModule().getMetadata().setVersion("1.0.0");
+        response.getModule().setId("SHACL shapes Plugin");
    
         return response;
 	}
 
 	public ValidationResponse validate(ValidateRequest validateRequest) {
+        LOG.info("Starting plugin validation");
 		File tmpFolder = validateTempFolder(validateRequest);
-		File contentSyntax = validateContentToValidate(validateRequest);
+		File contentToValidate = validateContentToValidate(validateRequest);
+        Report report = new Report();
 		
+		Model modelContent = getModel(contentToValidate);
+    	    	
+        PathPositionPlugin pathRule = new PathPositionPlugin(modelContent);
+        report = pathRule.validatePathPositionRule(report);
 		
+        ValidationResponse response = new ValidationResponse();
+        
+        response.setReport(report.generateReport());
+        
+        LOG.info("Ending plugin validation");
 		
-		ValidationResponse result = new ValidationResponse();
-		
-		return result;
+		return response;
 	}
 	
+	private Model getModel(File contentToValidate) {
+		Lang lang = RDFLanguages.contentTypeToLang(RDFLanguages.guessContentType(contentToValidate.getName()));
+		
+        try (InputStream dataStream = new FileInputStream(contentToValidate)) {       	
+        	//Read the model
+            Model fileModel = JenaUtil.createMemoryModel();
+            fileModel.read(dataStream, null, lang.getName()); 
+            
+            return fileModel;         
+        } catch (IOException e) {
+            throw new PluginException("An error occurred while reading a SHACL file.", e);
+        }        
+	}
+
 	private File validateTempFolder(ValidateRequest validateRequest) {
         String sTempFolderPath = getInputFor(validateRequest, PluginConstants.INPUT_TEMP_FOLDER);
 		
         if(!StringUtils.isEmpty(sTempFolderPath)) {        	
         	Path pTempFolder = Paths.get(sTempFolderPath);        	
-        	pTempFolder.toFile().getParentFile().mkdirs();
+        	pTempFolder.toFile().mkdirs();
     		
         	return pTempFolder.toFile();
         } else {
