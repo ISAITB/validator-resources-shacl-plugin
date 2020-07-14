@@ -5,38 +5,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.RestoreAction;
-
 import org.apache.commons.lang3.StringUtils;
-import org.apache.jena.graph.Graph;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.NodeIterator;
-import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.rdf.model.ResIterator;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.Statement;
-import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFLanguages;
-import org.apache.jena.shacl.Shapes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.topbraid.jenax.util.JenaUtil;
 
 import com.gitb.core.AnyContent;
 import com.gitb.core.ValidationModule;
-import com.gitb.tr.BAR;
-import com.gitb.tr.ObjectFactory;
-import com.gitb.tr.TAR;
-import com.gitb.tr.TestAssertionGroupReportsType;
-import com.gitb.tr.TestResultType;
-import com.gitb.tr.ValidationCounters;
 import com.gitb.vs.GetModuleDefinitionResponse;
 import com.gitb.vs.ValidateRequest;
 import com.gitb.vs.ValidationResponse;

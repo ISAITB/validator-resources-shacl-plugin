@@ -19,6 +19,7 @@ public abstract class JenaModelUtils {
 	
 	public NodeIterator getObjectsOfProperty(String property) {
 		Property p = this.currentModel.getProperty(property);
+		this.currentModel.listSubjectsWithProperty(p);
 		
         return this.currentModel.listObjectsOfProperty(p);
 	}

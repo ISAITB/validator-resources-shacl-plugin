@@ -6,10 +6,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.jena.ext.com.google.common.io.Resources;
 import org.apache.jena.query.Query;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.NodeIterator;
+import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.ResIterator;
+import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.sparql.core.TriplePath;
@@ -51,15 +56,36 @@ public class PathPositionPlugin extends JenaModelUtils {
     			boolean invalid = isPathPositionValid(query);
     			
     			if(invalid) {
-    				report.setErrors(1);
-    				
-    				//TODO: set Location, Test and Value
-    				report.setErrorItem(ruleDescription, null, null, null, node.asLiteral().getString());
+    				List<String> location = getLocation(node);
+    				report.setErrors(1);    				
+    				report.setErrorItem(ruleDescription, location.get(0), location.get(1), null, node.asLiteral().getString());
     			}
     		}
     	}
     	
     	return report;
+	}
+	
+	private List<String> getLocation(RDFNode node) {			
+		StmtIterator statementIt = this.currentModel.listStatements(null, null, node);
+		List<String> location = new ArrayList<>(2);
+		
+		while(statementIt.hasNext()) {
+			Statement statement = statementIt.next();
+			
+			if(statement.getSubject().isURIResource()) {
+				location.add(0, statement.getSubject().getURI());
+			}else {
+				location.add(0, StringUtils.EMPTY);
+			}
+			if(statement.getPredicate().isURIResource()) {
+				location.add(1, statement.getPredicate().getURI());					
+			}else {
+				location.add(1, StringUtils.EMPTY);
+			}
+		}
+		
+		return location;
 	}
 	
 	private boolean isPathPositionValid(Query query) {		
@@ -119,7 +145,7 @@ public class PathPositionPlugin extends JenaModelUtils {
         	
         	if(node.isResource()) {
         		NodeIterator niSelect = this.currentModel.listObjectsOfProperty(node.asResource(), this.currentModel.getProperty(selectProperty));	    		
-	    		
+
         		listNodes.addAll(niSelect.toList());
         	}
         }
