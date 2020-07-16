@@ -7,14 +7,18 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.NodeIterator;
 import org.apache.jena.rdf.model.Property;
 
+import eu.europa.ec.itb.shacl.plugin.Report;
+
 public abstract class JenaModelUtils {
 	protected Model currentModel;
+	protected Report report;
 	
 	protected static String shaclNamespace = "http://www.w3.org/ns/shacl#";
 	
 
-	public JenaModelUtils(Model currentModel) {
+	public JenaModelUtils(Model currentModel, Report report) {
 		this.currentModel = currentModel;
+		this.report = report;
 	}
 	
 	public NodeIterator getObjectsOfProperty(String property) {
@@ -35,6 +39,14 @@ public abstract class JenaModelUtils {
 		}catch(QueryException e) {
 			return null;
 		}		
+	}
+	
+	public Report getReport() {
+		return this.report;
+	}
+	
+	public void setReport(Report report) {
+		this.report = report;
 	}
 
 }

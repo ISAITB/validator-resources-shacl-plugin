@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -48,20 +51,50 @@ public class ValidationServiceShaclPlugin implements ValidationService{
 		File tmpFolder = validateTempFolder(validateRequest);
 		File contentToValidate = validateContentToValidate(validateRequest);
         Report report = new Report();
+        ValidationResponse response = new ValidationResponse();
 		
 		Model modelContent = getModel(contentToValidate);
-    	    	
-        PathPositionPlugin pathRule = new PathPositionPlugin(modelContent);
-        report = pathRule.validatePathPositionRule(report);
-		
-        ValidationResponse response = new ValidationResponse();
-        
+    	
+		report = executeRuleValidations(modelContent);	
+		       
         response.setReport(report.generateReport());
         
         LOG.info("Ending plugin validation");
 		
 		return response;
 	}
+	
+	private Report executeRuleValidations(Model modelContent) {
+		String packageName = "eu/europa/ec/itb/shacl/plugin/rules";
+		Report report = new Report();
+		
+		URL urlClasses = Thread.currentThread().getContextClassLoader().getResource(packageName);
+		
+		File packageFile = new File(urlClasses.getFile());
+		
+		try {
+			for(File f : packageFile.listFiles()) {
+				String className = f.getName();
+				
+				if(!className.contains("$1")) {
+					String classPackageName = packageName.replace("/", ".") + "." + className.replace(".class", "");
+					
+					Class<?> classe = Class.forName(classPackageName);
+					Constructor constructor = classe.getConstructor(Model.class, Report.class);
+					Rules rule = (Rules)constructor.newInstance(modelContent, report);
+					
+					rule.validateRule();
+					
+					report = rule.getReport();
+				}
+			}
+		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            throw new PluginException("An error occurred while executing the validation.", e);
+        }  
+		
+		return report;
+	}
+		
 	
 	private Model getModel(File contentToValidate) {
 		Lang lang = RDFLanguages.contentTypeToLang(RDFLanguages.guessContentType(contentToValidate.getName()));
