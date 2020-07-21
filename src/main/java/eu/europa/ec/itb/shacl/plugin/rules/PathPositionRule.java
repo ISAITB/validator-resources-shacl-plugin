@@ -19,8 +19,6 @@ import org.apache.jena.sparql.syntax.ElementVisitorBase;
 import org.apache.jena.sparql.syntax.ElementWalker;
 import org.apache.jena.vocabulary.RDF;
 
-import com.github.jsonldjava.shaded.com.google.common.base.Strings;
-
 import eu.europa.ec.itb.shacl.plugin.Report;
 import eu.europa.ec.itb.shacl.plugin.Rules;
 import eu.europa.ec.itb.shacl.plugin.utils.JenaModelUtils;
@@ -28,6 +26,7 @@ import eu.europa.ec.itb.shacl.plugin.utils.JenaModelUtils;
 /**
  * Rule ID: PATH-position 
  * Rule Definition: https://www.w3.org/TR/shacl/#syntax-rule-PATH-position
+ * Rule Description: The only legal use of the variable PATH in the SPARQL queries of SPARQL-based constraints and SELECT-based validators is in the predicate position of a triple pattern.
  * @author mfontsan
  *
  */
@@ -69,6 +68,12 @@ public class PathPositionRule extends JenaModelUtils  implements Rules {
     	}
 	}
 	
+	/**
+	 * Get the location in the SHACL shape of the error.
+	 * @param node
+	 * @return
+	 * 		returns java.lang.String
+	 */
 	private String getLocation(RDFNode node) {			
 		StmtIterator statementIt = this.currentModel.listStatements(null, null, node);
 		
@@ -86,6 +91,12 @@ public class PathPositionRule extends JenaModelUtils  implements Rules {
 		return StringUtils.EMPTY;
 	}
 	
+	/**
+	 * Validate that "$PATH" is in predicate position of the SPARQL query.
+	 * @param query
+	 * @return
+	 * 		boolean
+	 */
 	private boolean isPathPositionValid(Query query) {		
 		String queryPattern = query.getQueryPattern().toString();		
 		final Set<Boolean> subjects = new HashSet<>();
@@ -115,6 +126,11 @@ public class PathPositionRule extends JenaModelUtils  implements Rules {
 		return false;
 	}
 	
+	/**
+	 * Get the list of RDFNode that are SELECT-based validators.
+	 * @return
+	 * 		returns java.util.List<RDFNode>
+	 */
 	private List<RDFNode> getSelectBased(){
 		List<RDFNode> listNodes = new ArrayList<>();
 		
@@ -132,6 +148,11 @@ public class PathPositionRule extends JenaModelUtils  implements Rules {
         return listNodes;
 	}
 	
+	/**
+	 * Get the list of RDFNode that are SPARQL-based constraint.
+	 * @return
+	 * 		returns java.util.List<RDFNode>
+	 */
 	private List<RDFNode> getSPARQLBased(){
 		List<RDFNode> listNodes = new ArrayList<>();
 

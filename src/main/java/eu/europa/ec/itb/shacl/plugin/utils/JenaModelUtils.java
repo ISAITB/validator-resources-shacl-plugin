@@ -9,6 +9,11 @@ import org.apache.jena.rdf.model.Property;
 
 import eu.europa.ec.itb.shacl.plugin.Report;
 
+/**
+ * 
+ * @author mfontsan on 21/07/2020
+ *
+ */
 public abstract class JenaModelUtils {
 	protected Model currentModel;
 	protected Report report;
@@ -28,6 +33,12 @@ public abstract class JenaModelUtils {
         return this.currentModel.listObjectsOfProperty(p);
 	}
 	
+	/**
+	 * Transform String to Query
+	 * @param sQuery
+	 * @return
+	 * 		returns org.apache.jena.query.Query
+	 */
 	public Query getQuery(String sQuery) {
 		try {
 			ParameterizedSparqlString pss = new ParameterizedSparqlString();

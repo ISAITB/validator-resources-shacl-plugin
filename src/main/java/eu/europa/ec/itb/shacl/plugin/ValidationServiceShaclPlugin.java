@@ -7,9 +7,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Iterator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.rdf.model.Model;
@@ -30,8 +36,14 @@ import com.gitb.vs.Void;
 import eu.europa.ec.itb.shacl.plugin.error.PluginException;
 import eu.europa.ec.itb.shacl.plugin.utils.PluginConstants;
 
+/**
+ * Main class to execute all validations.
+ * @author mfontsan
+ *
+ */
 public class ValidationServiceShaclPlugin implements ValidationService{
     private static final Logger LOG = LoggerFactory.getLogger(ValidationServiceShaclPlugin.class);
+	private static final String packageName = "eu/europa/ec/itb/shacl/plugin/rules";
     
 	public ValidationServiceShaclPlugin() {
 		super();
@@ -48,14 +60,14 @@ public class ValidationServiceShaclPlugin implements ValidationService{
 
 	public ValidationResponse validate(ValidateRequest validateRequest) {
         LOG.info("Starting plugin validation");
+        //Validate input data.
 		File tmpFolder = validateTempFolder(validateRequest);
 		File contentToValidate = validateContentToValidate(validateRequest);
-        Report report = new Report();
-        ValidationResponse response = new ValidationResponse();
-		
+        
+		ValidationResponse response = new ValidationResponse();		
 		Model modelContent = getModel(contentToValidate);
     	
-		report = executeRuleValidations(modelContent);	
+		Report report = executeRuleValidations(modelContent);	
 		       
         response.setReport(report.generateReport());
         
@@ -64,38 +76,91 @@ public class ValidationServiceShaclPlugin implements ValidationService{
 		return response;
 	}
 	
+	/**
+	 * Get all classes from package "eu/europa/ec/itb/shacl/plugin/rules" and execute the validation.
+	 * @param modelContent
+	 * @return
+	 * 		returns eu.europa.ec.itb.shacl.plugin.Report
+	 */
 	private Report executeRuleValidations(Model modelContent) {
-		String packageName = "eu/europa/ec/itb/shacl/plugin/rules";
 		Report report = new Report();
 		
-		URL urlClasses = Thread.currentThread().getContextClassLoader().getResource(packageName);
-		
-		File packageFile = new File(urlClasses.getFile());
-		
 		try {
-			for(File f : packageFile.listFiles()) {
-				String className = f.getName();
+			URI uriClasses = this.getClass().getClassLoader().getResource(packageName).toURI();
+			
+			if(uriClasses.getScheme().contains("jar")){
+				URI jarLocation = this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI();
+				Path jarFile = new File(jarLocation.getPath()).toPath();
 				
-				if(!className.contains("$1")) {
-					String classPackageName = packageName.replace("/", ".") + "." + className.replace(".class", "");
+				FileSystem fs = FileSystems.newFileSystem(jarFile, null);
+		        DirectoryStream<Path> directoryStream = Files.newDirectoryStream(fs.getPath(packageName));
+		        
+		        Iterator<Path> it = directoryStream.iterator();
+		        
+		        while(it.hasNext()){
+		        	Path path = it.next();		        	
+		        	String className = path.toString().replace("/", ".").replace(".class", "");
+		        	
+		        	if(!className.contains("$1")) {
+			        	if(className.startsWith(".")) {
+			        		className = className.substring(1, className.length());
+			        		
+			        		report = executeClass(className, modelContent, report);
+			        	}
+		        	}
+				}
+			}else {
+				File packageFile = new File(uriClasses.toURL().getFile());
+				
+				for(File f : packageFile.listFiles()) {
+					String className = f.getName();
 					
-					Class<?> classe = Class.forName(classPackageName);
-					Constructor constructor = classe.getConstructor(Model.class, Report.class);
-					Rules rule = (Rules)constructor.newInstance(modelContent, report);
-					
-					rule.validateRule();
-					
-					report = rule.getReport();
+					if(!className.contains("$1")) {
+						String classPackageName = packageName.replace("/", ".") + "." + className.replace(".class", "");
+						
+		        		report = executeClass(classPackageName, modelContent, report);
+					}
 				}
 			}
-		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			
+		} catch (SecurityException | IllegalArgumentException | URISyntaxException | IOException | ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new PluginException("An error occurred while executing the validation.", e);
-        }  
+        } 
 		
 		return report;
 	}
-		
 	
+	/**
+	 * Get the constructor from the class and executes validateRule method.
+	 * @param className
+	 * @param modelContent
+	 * @param report
+	 * @return
+	 * 		returns eu.europa.ec.itb.shacl.plugin.Report
+	 * @throws ClassNotFoundException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 */
+	private Report executeClass(String className, Model modelContent, Report report) throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {    	
+		Class<?> classe = Class.forName(className);
+		Constructor<?> constructor = classe.getConstructor(Model.class, Report.class);
+		Rules rule = (Rules)constructor.newInstance(modelContent, report);
+		
+		rule.validateRule();
+		
+		return rule.getReport();
+	}
+		
+	/**
+	 * Read the input file and returns the model.
+	 * @param contentToValidate
+	 * @return
+	 * 		returns org.apache.jena.rdf.model.Model
+	 */
 	private Model getModel(File contentToValidate) {
 		Lang lang = RDFLanguages.contentTypeToLang(RDFLanguages.guessContentType(contentToValidate.getName()));
 		
@@ -110,6 +175,12 @@ public class ValidationServiceShaclPlugin implements ValidationService{
         }        
 	}
 
+	/**
+	 * Validate that the temp folder exists.
+	 * @param validateRequest
+	 * @return
+	 * 		returns java.io.File
+	 */
 	private File validateTempFolder(ValidateRequest validateRequest) {
         String sTempFolderPath = getInputFor(validateRequest, PluginConstants.INPUT_TEMP_FOLDER);
 		
@@ -124,11 +195,10 @@ public class ValidationServiceShaclPlugin implements ValidationService{
 	}
 	
     /**
-     * Validation of the content.
-     * @param validateRequest The request's parameters.
-     * @param explicitEmbeddingMethod
-	 * @param contentSyntax
-	 * @return The file to validate.
+     * Validate that the input file with the content exists and has valid content.
+     * @param validateRequest
+     * @return
+	 * 		returns java.io.File
      */
     private File validateContentToValidate(ValidateRequest validateRequest) {
         String contentToValidatePath = getInputFor(validateRequest, PluginConstants.INPUT_CONTENT);

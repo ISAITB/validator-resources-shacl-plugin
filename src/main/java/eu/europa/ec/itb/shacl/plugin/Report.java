@@ -14,6 +14,11 @@ import com.gitb.tr.TestAssertionReportType;
 import com.gitb.tr.TestResultType;
 import com.gitb.tr.ValidationCounters;
 
+/**
+ * 
+ * @author mfontsan 21/07/2020
+ *
+ */
 public class Report {
     private static final com.gitb.tr.ObjectFactory objectFactory = new ObjectFactory();
     
@@ -27,6 +32,11 @@ public class Report {
 		this.items = new ArrayList<>();
 	}
 	
+	/**
+	 * Generate TAR report from the results.
+	 * @return
+	 * 		returns com.gitb.tr.TAR
+	 */
 	public TAR generateReport() {
 		TAR report = new TAR();
         report.setResult(getResult());
@@ -40,6 +50,11 @@ public class Report {
         return report;
      }
 	
+	/**
+	 * Get the result of the report.
+	 * @return
+	 * 		returns com.gitb.tr.TestResultType
+	 */
 	private TestResultType getResult(){
 		if(errors>0) {
 			return TestResultType.FAILURE;
