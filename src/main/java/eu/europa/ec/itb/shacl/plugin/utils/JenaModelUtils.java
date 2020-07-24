@@ -19,6 +19,7 @@ public abstract class JenaModelUtils {
 	protected Report report;
 	
 	protected static String shaclNamespace = "http://www.w3.org/ns/shacl#";
+	protected static String owlNamespace = "http://www.w3.org/2002/07/owl#";
 	
 
 	public JenaModelUtils(Model currentModel, Report report) {
@@ -28,7 +29,6 @@ public abstract class JenaModelUtils {
 	
 	public NodeIterator getObjectsOfProperty(String property) {
 		Property p = this.currentModel.getProperty(property);
-		this.currentModel.listSubjectsWithProperty(p);
 		
         return this.currentModel.listObjectsOfProperty(p);
 	}

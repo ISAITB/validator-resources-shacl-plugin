@@ -58,11 +58,13 @@ public class PathPositionRule extends JenaModelUtils  implements Rules {
     	for(RDFNode node : listNodes) {    		
     		if(node.isLiteral()) {
     			Query query = getQuery(node.asLiteral().getString());
-    			boolean invalid = isPathPositionValid(query);
-    			
-    			if(invalid) {
-    				report.setErrors(1);    				
-    				report.setErrorItem(ruleDescription, reportAssertionID, getLocation(node), null, node.asLiteral().getString());
+    			if(query!=null) {
+	    			boolean invalid = isPathPositionValid(query);
+	    			
+	    			if(invalid) {
+	    				report.setErrors(1);    				
+	    				report.setErrorItem(ruleDescription, reportAssertionID, getLocation(node), null, node.asLiteral().getString());
+	    			}
     			}
     		}
     	}
