@@ -42,15 +42,21 @@ public class NodeExpressionRecursionRule extends JenaModelUtils  implements Rule
 		listFS.addAll(getListObjects(pathProperty));
 		listFS.addAll(getListObjects(nodeProperty));
 		listFS.addAll(getListObjects(thisProperty));
-		int filterShapeErrors = getTripleProperty(listFS);
-
-		report.setErrors(filterShapeErrors);
+		
+		getTripleProperty(listFS);
 	}
 	
+	/**
+	 * List statements with the predicate propertyName
+	 * @param propertyName
+	 * @return
+	 * 		returns java.util.List<Statement>
+	 */
 	private List<Statement> getListObjects(String propertyName) {
-		Property pPredicate = this.currentModel.getProperty(propertyName);
-		NodeIterator ni = this.currentModel.listObjectsOfProperty(pPredicate);
 		List<Statement> listStatements = new ArrayList<>();
+		
+		Property pPredicate = getProperty(propertyName);
+		NodeIterator ni = this.currentModel.listObjectsOfProperty(pPredicate);
 		
 		for(RDFNode rObject : ni.toList()) {			
 			StmtIterator si = this.currentModel.listStatements(null, pPredicate, rObject);
@@ -61,27 +67,34 @@ public class NodeExpressionRecursionRule extends JenaModelUtils  implements Rule
 		return listStatements;
 	}
 	
-	private int getTripleProperty(List<Statement> listFS) {
-		int errors = 0;
-		
+	/**
+	 * Validate the subject is not nested as object of the same Statement.
+	 * @param listFS
+	 */
+	private void getTripleProperty(List<Statement> listFS) {		
 		for(Statement statement : listFS){
 			boolean recursive = false;
+			
 			if(StringUtils.equals(statement.getPredicate().toString(), statement.getObject().toString())) {
 				recursive = true;
 			}else {
-				recursive = isRecursive(statement.getSubject(), statement.getObject(), statement.getObject());
+				recursive = isRecursive(statement.getSubject(), statement.getObject());
 			}
 			
 			if(recursive) {
-				errors++;
-				report.setErrorItem(ruleDescription, statement.getPredicate().toString(), null, null, statement.getObject().toString());						
+				report.setErrorItem(ruleDescription, statement.getPredicate().toString(), null, null, getMainShape(statement.getObject().asResource()).toString());						
 			}
 		}
-		
-		return errors;
 	}
 	
-	private boolean isRecursive(Resource rSubject, RDFNode originalObject, RDFNode rObject) {
+	/**
+	 * Validate the recursivity of a Resource.
+	 * @param rSubject
+	 * @param originalObject
+	 * @return
+	 * 		returns boolean
+	 */
+	private boolean isRecursive(Resource rSubject, RDFNode originalObject) {
 		boolean recursive = false;
 		
 		RDFNode subjectNode = this.currentModel.asRDFNode(rSubject.asNode());
@@ -101,7 +114,7 @@ public class NodeExpressionRecursionRule extends JenaModelUtils  implements Rule
 					if(StringUtils.contains(uriResource, shaclNamespace)) {
 						return false;
 					}
-					recursive = isRecursive(statement.getSubject(), originalObject, statement.getObject());
+					recursive = isRecursive(statement.getSubject(), originalObject);
 				}
 			}
 		}

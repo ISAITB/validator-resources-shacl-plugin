@@ -32,10 +32,8 @@ public class NameNodeshapeRule extends JenaModelUtils  implements Rules {
 	}
 
 
-	public void validateRule() {
-		int warnings = 0;
-		
-		Node nodeShapeNode = this.currentModel.getProperty(nodeShapeProperty).asNode();
+	public void validateRule() {		
+		Node nodeShapeNode = getProperty(nodeShapeProperty).asNode();
 		
 		ResIterator listSubjects = this.currentModel.listResourcesWithProperty(null, this.currentModel.asRDFNode(nodeShapeNode));
 		
@@ -43,22 +41,18 @@ public class NameNodeshapeRule extends JenaModelUtils  implements Rules {
 			Resource subject = listSubjects.next();
 			
 			NodeIterator listObjects = this.currentModel.listObjectsOfProperty(subject, this.currentModel.getProperty(targetClassProperty));
-			boolean hasWarning = false;
-			
+			boolean hasWarning = false;			
 			
 			while(listObjects.hasNext() && !hasWarning) {
 				RDFNode className = listObjects.next();
 				String subjectName = subject.getLocalName();
 				
 				if(!StringUtils.contains(subjectName, localName) || !StringUtils.contains(subjectName, className.asResource().getLocalName())) {
-					warnings++;
 					hasWarning = true;
-					report.setWarningItem(ruleDescription, reportAssertionID, null, null, subjectName);
+					report.setWarningItem(ruleDescription, reportAssertionID, null, null, this.getMainShape(subject).toString());
 				}
 			}
 		}
-		
-		report.setWarnings(warnings);
 	}
 	
 }

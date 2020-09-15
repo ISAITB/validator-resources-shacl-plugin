@@ -57,7 +57,6 @@ public class PrefixesDuplicatesRule extends JenaModelUtils  implements Rules {
 			List<String> namespaces = listPrefixes.get(sKey);
 			
 			if(namespaces.size()>1) {
-				report.setErrors(1);
 				report.setErrorItem(ruleDescription, reportAssertionID, null, null, sKey);
 			}
 		}

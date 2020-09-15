@@ -26,9 +26,7 @@ public class NamespacePrefixesRule extends JenaModelUtils  implements Rules {
 	}
 
 
-	public void validateRule() {
-		int warnings = 0;
-		
+	public void validateRule() {		
 		Map<String, String> mNamespace = this.currentModel.getNsPrefixMap();
 		
 		if(!mNamespace.isEmpty()) {
@@ -36,13 +34,10 @@ public class NamespacePrefixesRule extends JenaModelUtils  implements Rules {
 			
 			for(String ns: setNs) {
 				if(StringUtils.isEmpty(ns)) {
-					warnings++;
 					report.setWarningItem(ruleDescription, reportAssertionID, null, null, mNamespace.get(ns));					
 				}
 			}
 		}
-		
-		report.setWarnings(warnings);
 	}
 	
 }

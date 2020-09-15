@@ -2,7 +2,6 @@ package eu.europa.ec.itb.shacl.plugin.rules;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.NodeIterator;
-import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFList;
 import org.apache.jena.rdf.model.RDFNode;
 
@@ -30,18 +29,18 @@ public class IntersectionUnionListRule extends JenaModelUtils  implements Rules 
 	}
 
 	public void validateRule() {
-		int errorUnion = getValuesProperty(unionProperty, ruleDescriptionUnion);
-		int errorIntersection = getValuesProperty(intersectionProperty, ruleDescriptionIntersection);
-		
-		report.setErrors(errorUnion + errorIntersection);
+		validateList(unionProperty, ruleDescriptionUnion);
+		validateList(intersectionProperty, ruleDescriptionIntersection);		
 	}
 	
-	private int getValuesProperty(String propertyName, String ruleDescription) {
-		//1. Get sh:intersection / sh:union
-		int errors = 0;
-		Property pParameter = this.currentModel.getProperty(propertyName);
-		
-		NodeIterator ri = this.currentModel.listObjectsOfProperty(pParameter);
+	/**
+	 * Validate the propertyName is a list with at least 2 members.
+	 * @param propertyName
+	 * @param ruleDescription
+	 */
+	private void validateList(String propertyName, String ruleDescription) {
+		//1. Get sh:intersection / sh:union		
+		NodeIterator ri = getObjectsOfProperty(propertyName);
 		
 		while(ri.hasNext()) {
 			RDFNode res = ri.next();
@@ -53,18 +52,14 @@ public class IntersectionUnionListRule extends JenaModelUtils  implements Rules 
 					
 					//3. Validate it has at least 2 members
 					if(list.size()<2) {	
-						errors++;
-						report.setErrorItem(ruleDescription, propertyName, null, null, res.asResource().toString());						
+						report.setErrorItem(ruleDescription, propertyName, null, null, getMainShape(res.asResource()).toString());						
 					}
 				}catch(Exception e){	
-					errors++;
-					report.setErrorItem(ruleDescription, propertyName, null, null, res.asResource().toString());					
+					report.setErrorItem(ruleDescription, propertyName, null, null, getMainShape(res.asResource()).toString());					
 				}
 			}
 			
 		}
-		
-		return errors;
 	}
 	
 }

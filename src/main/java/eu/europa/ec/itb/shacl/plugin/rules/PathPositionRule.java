@@ -35,8 +35,8 @@ public class PathPositionRule extends JenaModelUtils  implements Rules {
 	private static String selectProperty = shaclNamespace + "select";
 	private static String selectBased = shaclNamespace + "SPARQLSelectValidator";
 	private static String pathPredicate = "?PATH";
-	private static String reportAssertionID = "http://www.w3.org/ns/shacl#select";
 	
+	private static String reportAssertionID = "http://www.w3.org/ns/shacl#select";	
 	private String ruleDescription = "The only legal use of the variable PATH in the SPARQL queries of SPARQL-based constraints and SELECT-based validators is in the predicate position of a triple pattern.";
 	
 
@@ -47,7 +47,7 @@ public class PathPositionRule extends JenaModelUtils  implements Rules {
 	public void validateRule() {
     	//PATH-position
     	//The variable PATH is in the predicate position of a triple pattern.
-		List<RDFNode> listNodes = new ArrayList<>();
+		List<RDFNode> listNodes = new ArrayList<>();		
 
         //1. SPARQL queries of SPARQL-based constraint
         listNodes.addAll(getSPARQLBased());
@@ -61,9 +61,8 @@ public class PathPositionRule extends JenaModelUtils  implements Rules {
     			if(query!=null) {
 	    			boolean invalid = isPathPositionValid(query);
 	    			
-	    			if(invalid) {
-	    				report.setErrors(1);    				
-	    				report.setErrorItem(ruleDescription, reportAssertionID, getLocation(node), null, node.asLiteral().getString());
+	    			if(invalid) {	
+	    				report.setErrorItem(ruleDescription, reportAssertionID, getLocation(node), null, getMainShape(node.asResource()).toString());
 	    			}
     			}
     		}

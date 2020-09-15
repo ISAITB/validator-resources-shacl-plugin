@@ -28,11 +28,9 @@ public class ListRule extends JenaModelUtils  implements Rules {
 	}
 
 	public void validateRule() {
-		int warnings = 0;
-
     	Resource listProperty = this.currentModel.getResource(listUri);
     	
-    	ResIterator itSubjects = this.currentModel.listSubjectsWithProperty(null, this.currentModel.asRDFNode(listProperty.asNode()));
+    	ResIterator itSubjects = this.currentModel.listResourcesWithProperty(null, this.currentModel.asRDFNode(listProperty.asNode()));
     	
     	while(itSubjects.hasNext()) {
     		Resource subject = itSubjects.next();
@@ -40,12 +38,9 @@ public class ListRule extends JenaModelUtils  implements Rules {
     		RDFList list = this.currentModel.getList(subject);
     		
     		if(list.size()>maxSize) {
-    			warnings++;
     			report.setWarningItem(ruleDescription, listUri, null, null, this.getMainShape(subject).toString());
     		}
-    	}
-		    	
-    	report.setWarnings(warnings);    	
+    	} 	
 	}
 	
 }

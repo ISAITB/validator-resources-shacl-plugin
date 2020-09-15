@@ -33,8 +33,7 @@ public class PreBindingLimitationsRule extends JenaModelUtils  implements Rules 
 	private static String askProperty = shaclNamespace + "ask";
 	private static String preBindingThis = "this";
 	
-	private static String reportAssertionID = "http://www.w3.org/ns/shacl#select";
-	
+	private static String reportAssertionID = "http://www.w3.org/ns/shacl#select";	
 	private String ruleDescription = "Subqueries must return all potentially pre-bound variables, except shapesGraph and currentShape which are optional as already mentioned in 5.3.1 Pre-bound Variables in SPARQL Constraints ($this, $shapesGraph, $currentShape).";
 	
 
@@ -59,9 +58,8 @@ public class PreBindingLimitationsRule extends JenaModelUtils  implements Rules 
     			if(query!=null) {
 	    			boolean invalid = isSubqueryValid(query);
 	    			
-	    			if(invalid) {
-	    				report.setErrors(1);    				
-	    				report.setErrorItem(ruleDescription, reportAssertionID, getLocation(node), null, node.asLiteral().getString());
+	    			if(invalid) { 
+	    				report.setErrorItem(ruleDescription, reportAssertionID, getLocation(node), null, getMainShape(node.asResource()).toString());
 	    			}
     			}
     		}

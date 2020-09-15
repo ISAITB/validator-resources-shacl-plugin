@@ -33,14 +33,14 @@ public class ParameterUniqueRule extends JenaModelUtils  implements Rules {
 
 
 	public void validateRule() {
-		Property pParameter = this.currentModel.getProperty(parameterProperty);
-		Property pPath = this.currentModel.getProperty(pathProperty);
-		List<Resource> subjectsParameter = this.currentModel.listSubjectsWithProperty(pParameter).toList();
+		Property pParameter = getProperty(parameterProperty);
+		Property pPath = getProperty(pathProperty);
+		List<Resource> subjectsParameter = this.currentModel.listResourcesWithProperty(pParameter).toList();
 		
 		for(Resource subject : subjectsParameter) {			
 			List<RDFNode> objectParameter = this.currentModel.listObjectsOfProperty(subject, pParameter).toList();
 			List<String> pathValues = new ArrayList<>();
-			List<String> pathDuplicates = new ArrayList<>();
+			List<Resource> pathDuplicates = new ArrayList<>();
 			
 			for(RDFNode object : objectParameter) {
 				if(object.isResource()) {
@@ -49,14 +49,13 @@ public class ParameterUniqueRule extends JenaModelUtils  implements Rules {
 					if(!pathValues.contains(st.getObject().toString())) {
 						pathValues.add(st.getObject().toString());						
 					}else {
-						pathDuplicates.add(st.getObject().toString());
+						pathDuplicates.add(st.getObject().asResource());
 					}
 				}
 			}
 			
-			for(String duplicate : pathDuplicates) {
-				report.setErrors(1);    				
-				report.setErrorItem(ruleDescription, reportAssertionID, subject.toString(), null, duplicate);				
+			for(Resource duplicate : pathDuplicates) {  				
+				report.setErrorItem(ruleDescription, reportAssertionID, subject.toString(), null, getMainShape(duplicate).toString());				
 			}
 		}
 
