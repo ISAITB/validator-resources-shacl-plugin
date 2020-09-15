@@ -66,31 +66,17 @@ public class Report {
 		return TestResultType.SUCCESS;
 	}
 	
-	public void setErrors(int errorNumber) {
-		this.errors = this.errors + errorNumber;
+	public void addError() {
+		this.errors++;
 	}
 	
-	public void setWarnings(int warningNumber) {
-		this.warnings = this.warnings + warningNumber;
+	public void addWarning() {
+		this.warnings++;
 	}
 	
-	public void setAssertions(int assertionNumber) {
-		this.assertions = this.assertions + assertionNumber;
+	public void addAssertion() {
+		this.assertions++;
 	}
-
-	
-    public List<JAXBElement<TestAssertionReportType>> getItems() {
-		return items;
-	}
-
-	public void setItems(List<JAXBElement<TestAssertionReportType>> items) {
-		this.items = items;
-	}
-
-	public void setItems(JAXBElement<TestAssertionReportType> item) {
-		items.add(item);
-	}
-
 
 	private BAR setItem(String description, String assertionId, String location, String test, String value) {
         BAR item = new BAR();
@@ -109,6 +95,7 @@ public class Report {
         BAR item = setItem(description, assertionId, location, test, value);
         
         items.add(objectFactory.createTestAssertionGroupReportsTypeError(item));
+        addError();
     }
 
 
@@ -116,6 +103,7 @@ public class Report {
         BAR item = setItem(description, assertionId, location, test, value);
         
         items.add(objectFactory.createTestAssertionGroupReportsTypeInfo(item));
+        addAssertion();
     }
 
 
@@ -123,5 +111,6 @@ public class Report {
         BAR item = setItem(description, assertionId, location, test, value);
         
         items.add(objectFactory.createTestAssertionGroupReportsTypeWarning(item));
+        addWarning();
     }
 }
