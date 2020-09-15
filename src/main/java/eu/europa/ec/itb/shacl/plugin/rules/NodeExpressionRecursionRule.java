@@ -82,7 +82,8 @@ public class NodeExpressionRecursionRule extends JenaModelUtils  implements Rule
 			}
 			
 			if(recursive) {
-				report.setErrorItem(ruleDescription, statement.getPredicate().toString(), null, null, getMainShape(statement.getObject().asResource()).toString());						
+				String shape = getMainShape(statement.getObject().asResource()).toString();
+				report.setErrorItem(ruleDescription, statement.getPredicate().toString(), shape, null,shape);						
 			}
 		}
 	}

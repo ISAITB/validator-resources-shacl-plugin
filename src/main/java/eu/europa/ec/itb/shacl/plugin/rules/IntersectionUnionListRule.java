@@ -52,10 +52,12 @@ public class IntersectionUnionListRule extends JenaModelUtils  implements Rules 
 					
 					//3. Validate it has at least 2 members
 					if(list.size()<2) {	
-						report.setErrorItem(ruleDescription, propertyName, null, null, getMainShape(res.asResource()).toString());						
+						String shape = getMainShape(res.asResource()).toString();
+						report.setErrorItem(ruleDescription, propertyName, shape, null, shape);						
 					}
 				}catch(Exception e){	
-					report.setErrorItem(ruleDescription, propertyName, null, null, getMainShape(res.asResource()).toString());					
+					String shape = getMainShape(res.asResource()).toString();
+					report.setErrorItem(ruleDescription, propertyName, shape, null, shape);					
 				}
 			}
 			

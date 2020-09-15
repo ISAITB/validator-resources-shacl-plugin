@@ -38,7 +38,8 @@ public class ListRule extends JenaModelUtils  implements Rules {
     		RDFList list = this.currentModel.getList(subject);
     		
     		if(list.size()>maxSize) {
-    			report.setWarningItem(ruleDescription, listUri, null, null, this.getMainShape(subject).toString());
+    			String shape = getMainShape(subject).toString();
+    			report.setWarningItem(ruleDescription, listUri, shape, null, shape);
     		}
     	} 	
 	}

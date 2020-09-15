@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.query.Query;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.NodeIterator;
@@ -62,34 +61,12 @@ public class PathPositionRule extends JenaModelUtils  implements Rules {
 	    			boolean invalid = isPathPositionValid(query);
 	    			
 	    			if(invalid) {	
-	    				report.setErrorItem(ruleDescription, reportAssertionID, getLocation(node), null, getMainShape(node.asResource()).toString());
+	    				String shape = getMainShape(node.asResource()).toString();
+	    				report.setErrorItem(ruleDescription, reportAssertionID, shape, null, shape);
 	    			}
     			}
     		}
     	}
-	}
-	
-	/**
-	 * Get the location in the SHACL shape of the error.
-	 * @param node
-	 * @return
-	 * 		returns java.lang.String
-	 */
-	private String getLocation(RDFNode node) {			
-		StmtIterator statementIt = this.currentModel.listStatements(null, null, node);
-		
-		while(statementIt.hasNext()) {
-			Statement statement = statementIt.next();
-			
-			if(statement.getSubject().isURIResource()) {
-				return statement.getSubject().getURI();
-			}
-			if(statement.getPredicate().isURIResource()) {
-				return statement.getPredicate().getURI();					
-			}
-		}
-		
-		return StringUtils.EMPTY;
 	}
 	
 	/**

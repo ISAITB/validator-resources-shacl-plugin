@@ -49,7 +49,8 @@ public class DefaultValueDatatypeRule extends JenaModelUtils  implements Rules {
     		ruleOK = validateDefaultValue(subject, defaultValueProperty, datatypeProperty, classProperty);
     		
     		if(!ruleOK) {
-				report.setWarningItem(ruleDescription, reportAssertionID, null, null, getMainShape(subject).toString());	
+    			Resource shape = getMainShape(subject);
+				report.setWarningItem(ruleDescription, reportAssertionID, shape.toString(), null, shape.toString());	
     		}
     	}
     	

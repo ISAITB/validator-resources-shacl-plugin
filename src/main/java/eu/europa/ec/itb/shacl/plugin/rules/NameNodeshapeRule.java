@@ -49,7 +49,8 @@ public class NameNodeshapeRule extends JenaModelUtils  implements Rules {
 				
 				if(!StringUtils.contains(subjectName, localName) || !StringUtils.contains(subjectName, className.asResource().getLocalName())) {
 					hasWarning = true;
-					report.setWarningItem(ruleDescription, reportAssertionID, null, null, this.getMainShape(subject).toString());
+					String shape = this.getMainShape(subject).toString();
+					report.setWarningItem(ruleDescription, reportAssertionID, shape, null, shape);
 				}
 			}
 		}

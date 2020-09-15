@@ -34,7 +34,7 @@ public class NamespacePrefixesRule extends JenaModelUtils  implements Rules {
 			
 			for(String ns: setNs) {
 				if(StringUtils.isEmpty(ns)) {
-					report.setWarningItem(ruleDescription, reportAssertionID, null, null, mNamespace.get(ns));					
+					report.setWarningItem(ruleDescription, reportAssertionID, mNamespace.get(ns), null, mNamespace.get(ns));					
 				}
 			}
 		}

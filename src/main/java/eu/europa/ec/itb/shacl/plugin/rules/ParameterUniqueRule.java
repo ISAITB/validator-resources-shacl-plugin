@@ -54,8 +54,9 @@ public class ParameterUniqueRule extends JenaModelUtils  implements Rules {
 				}
 			}
 			
-			for(Resource duplicate : pathDuplicates) {  				
-				report.setErrorItem(ruleDescription, reportAssertionID, subject.toString(), null, getMainShape(duplicate).toString());				
+			for(Resource duplicate : pathDuplicates) {  	
+				String shape = getMainShape(duplicate).toString();
+				report.setErrorItem(ruleDescription, reportAssertionID, shape, null, shape);				
 			}
 		}
 
