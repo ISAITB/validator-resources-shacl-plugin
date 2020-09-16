@@ -56,8 +56,7 @@ public class PreBindingLimitationsRule extends JenaModelUtils  implements Rules 
 	    			boolean invalid = isSubqueryValid(query);
 	    			
 	    			if(invalid) { 
-	    				String shape = getMainShape(node.asResource()).toString();
-	    				report.setErrorItem(ruleDescription, reportAssertionID, shape, null, shape);
+	    				report.setErrorItem(ruleDescription, reportAssertionID, node.toString(), null, node.toString());
 	    			}
     			}
     		}
