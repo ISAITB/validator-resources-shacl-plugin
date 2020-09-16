@@ -1,4 +1,4 @@
-package eu.europa.ec.itb.shacl.plugin.rules;
+package eu.europa.ec.itb.shacl.plugin.rules.bestPractice;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.graph.Node;

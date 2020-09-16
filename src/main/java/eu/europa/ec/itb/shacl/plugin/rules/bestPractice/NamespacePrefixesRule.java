@@ -1,4 +1,4 @@
-package eu.europa.ec.itb.shacl.plugin.rules;
+package eu.europa.ec.itb.shacl.plugin.rules.bestPractice;
 
 import java.util.Map;
 import java.util.Set;

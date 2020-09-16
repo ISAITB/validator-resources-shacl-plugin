@@ -1,4 +1,4 @@
-package eu.europa.ec.itb.shacl.plugin.rules;
+package eu.europa.ec.itb.shacl.plugin.rules.advancedFeature;
 
 import java.util.ArrayList;
 import java.util.List;

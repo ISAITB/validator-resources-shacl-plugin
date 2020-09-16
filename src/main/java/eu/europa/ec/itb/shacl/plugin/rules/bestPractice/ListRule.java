@@ -1,4 +1,4 @@
-package eu.europa.ec.itb.shacl.plugin.rules;
+package eu.europa.ec.itb.shacl.plugin.rules.bestPractice;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFList;
