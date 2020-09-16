@@ -61,11 +61,6 @@
             <version>${version.jena}</version>
         </dependency>
         <dependency>
-		    <groupId>org.apache.jena</groupId>
-		    <artifactId>jena-shacl</artifactId>
-            <version>${version.jena}</version>
-		</dependency>
-        <dependency>
             <groupId>org.topbraid</groupId>
             <artifactId>shacl</artifactId>
             <version>${version.topbraid}</version>
@@ -75,12 +70,6 @@
             <artifactId>commons-lang3</artifactId>
             <version>${commonsLang.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
-		<dependency>
-		    <groupId>commons-codec</groupId>
-		    <artifactId>commons-codec</artifactId>
-		    <version>1.14</version>
-		</dependency>
         
   </dependencies>
 </project>
