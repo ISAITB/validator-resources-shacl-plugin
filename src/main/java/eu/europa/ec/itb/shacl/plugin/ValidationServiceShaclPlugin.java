@@ -41,9 +41,11 @@ import eu.europa.ec.itb.shacl.plugin.utils.PluginConstants;
  * @author mfontsan
  *
  */
-public class ValidationServiceShaclPlugin implements ValidationService{
+public abstract class ValidationServiceShaclPlugin implements ValidationService{
     private static final Logger LOG = LoggerFactory.getLogger(ValidationServiceShaclPlugin.class);
-	private static final String packageName = "eu/europa/ec/itb/shacl/plugin/rules";
+	private String packageName = "eu/europa/ec/itb/shacl/plugin/rules";
+	protected static final String packageBPName = "eu/europa/ec/itb/shacl/plugin/rules/bestPractice";
+	protected static final String packagAFeName = "eu/europa/ec/itb/shacl/plugin/rules/advancedFeature";
     
 	public ValidationServiceShaclPlugin() {
 		super();
@@ -74,6 +76,10 @@ public class ValidationServiceShaclPlugin implements ValidationService{
         LOG.info("Ending plugin validation");
 		
 		return response;
+	}
+	
+	public void setPackageName(String name) {
+		packageName = name;
 	}
 	
 	/**
