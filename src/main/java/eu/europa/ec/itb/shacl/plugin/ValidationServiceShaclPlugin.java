@@ -15,6 +15,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.apache.commons.lang3.StringUtils;
@@ -43,12 +44,14 @@ import eu.europa.ec.itb.shacl.plugin.utils.PluginConstants;
  */
 public abstract class ValidationServiceShaclPlugin implements ValidationService{
     private static final Logger LOG = LoggerFactory.getLogger(ValidationServiceShaclPlugin.class);
-	private String packageName = "eu/europa/ec/itb/shacl/plugin/rules";
+	private ArrayList<String> packageName;
 	protected static final String packageBPName = "eu/europa/ec/itb/shacl/plugin/rules/bestPractice";
 	protected static final String packagAFeName = "eu/europa/ec/itb/shacl/plugin/rules/advancedFeature";
     
 	public ValidationServiceShaclPlugin() {
 		super();
+		
+		packageName = new ArrayList<>();
 	}
 
 	public GetModuleDefinitionResponse getModuleDefinition(Void parameters) {
@@ -79,7 +82,7 @@ public abstract class ValidationServiceShaclPlugin implements ValidationService{
 	}
 	
 	public void setPackageName(String name) {
-		packageName = name;
+		packageName.add(name);
 	}
 	
 	/**
@@ -92,43 +95,44 @@ public abstract class ValidationServiceShaclPlugin implements ValidationService{
 		Report report = new Report();
 		
 		try {
-			URI uriClasses = this.getClass().getClassLoader().getResource(packageName).toURI();
-			
-			if(uriClasses.getScheme().contains("jar")){
-				URI jarLocation = this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI();
-				Path jarFile = new File(jarLocation.getPath()).toPath();
+			for(String resourceName: packageName) {
+				URI uriClasses = this.getClass().getClassLoader().getResource(resourceName).toURI();
 				
-				FileSystem fs = FileSystems.newFileSystem(jarFile, null);
-		        DirectoryStream<Path> directoryStream = Files.newDirectoryStream(fs.getPath(packageName));
-		        
-		        Iterator<Path> it = directoryStream.iterator();
-		        
-		        while(it.hasNext()){
-		        	Path path = it.next();		        	
-		        	String className = path.toString().replace("/", ".").replace(".class", "");
-		        	
-		        	if(!className.contains("$1")) {
-			        	if(className.startsWith(".")) {
-			        		className = className.substring(1, className.length());
-			        		
-			        		report = executeClass(className, modelContent, report);
-			        	}
-		        	}
-				}
-			}else {
-				File packageFile = new File(uriClasses.toURL().getFile());
-				
-				for(File f : packageFile.listFiles()) {
-					String className = f.getName();
+				if(uriClasses.getScheme().contains("jar")){
+					URI jarLocation = this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI();
+					Path jarFile = new File(jarLocation.getPath()).toPath();
 					
-					if(!className.contains("$1")) {
-						String classPackageName = packageName.replace("/", ".") + "." + className.replace(".class", "");
+					FileSystem fs = FileSystems.newFileSystem(jarFile, null);
+			        DirectoryStream<Path> directoryStream = Files.newDirectoryStream(fs.getPath(resourceName));
+			        
+			        Iterator<Path> it = directoryStream.iterator();
+			        
+			        while(it.hasNext()){
+			        	Path path = it.next();		        	
+			        	String className = path.toString().replace("/", ".").replace(".class", "");
+			        	
+			        	if(!className.contains("$1")) {
+				        	if(className.startsWith(".")) {
+				        		className = className.substring(1, className.length());
+				        		
+				        		report = executeClass(className, modelContent, report);
+				        	}
+			        	}
+					}
+				}else {
+					File packageFile = new File(uriClasses.toURL().getFile());
+					
+					for(File f : packageFile.listFiles()) {
+						String className = f.getName();
 						
-		        		report = executeClass(classPackageName, modelContent, report);
+						if(!className.contains("$1")) {
+							String classPackageName = resourceName.replace("/", ".") + "." + className.replace(".class", "");
+							
+			        		report = executeClass(classPackageName, modelContent, report);
+						}
 					}
 				}
 			}
-			
 		} catch (SecurityException | IllegalArgumentException | URISyntaxException | IOException | ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new PluginException("An error occurred while executing the validation.", e);
         } 
