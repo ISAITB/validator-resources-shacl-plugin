@@ -1,5 +1,6 @@
 package eu.europa.ec.itb.shacl.plugin.rules.advancedFeature;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class NodeExpressionRecursionRule extends JenaModelUtils  implements Rule
 	private String ruleDescription = "A node expression cannot recursively have itself as a \"nested\" node expression, e.g. as value of sh:nodes.";
 	
 
-	public NodeExpressionRecursionRule(Model currentModel, Report report) {
+	public NodeExpressionRecursionRule(Model currentModel, Report report, File fileContent) {
 		super(currentModel, report);
 	}
 

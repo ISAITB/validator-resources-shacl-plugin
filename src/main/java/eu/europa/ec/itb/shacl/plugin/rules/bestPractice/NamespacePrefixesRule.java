@@ -1,5 +1,6 @@
 package eu.europa.ec.itb.shacl.plugin.rules.bestPractice;
 
+import java.io.File;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,7 +22,7 @@ public class NamespacePrefixesRule extends JenaModelUtils  implements Rules {
 	private String ruleDescription = "Prefixes for all namespaces SHOULD be defined.";
 	private static String reportAssertionID = "prefix";
 	
-	public NamespacePrefixesRule(Model currentModel, Report report) {		
+	public NamespacePrefixesRule(Model currentModel, Report report, File fileContent) {		
 		super(currentModel, report);
 	}
 

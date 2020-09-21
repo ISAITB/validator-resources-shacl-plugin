@@ -72,7 +72,7 @@ public abstract class ValidationServiceShaclPlugin implements ValidationService{
 		ValidationResponse response = new ValidationResponse();		
 		Model modelContent = getModel(contentToValidate);
     	
-		Report report = executeRuleValidations(modelContent);	
+		Report report = executeRuleValidations(modelContent, contentToValidate);	
 		       
         response.setReport(report.generateReport());
         
@@ -88,10 +88,11 @@ public abstract class ValidationServiceShaclPlugin implements ValidationService{
 	/**
 	 * Get all classes from package "eu/europa/ec/itb/shacl/plugin/rules" and execute the validation.
 	 * @param modelContent
+	 * @param contentToValidate 
 	 * @return
 	 * 		returns eu.europa.ec.itb.shacl.plugin.Report
 	 */
-	private Report executeRuleValidations(Model modelContent) {
+	private Report executeRuleValidations(Model modelContent, File contentToValidate) {
 		Report report = new Report();
 		
 		try {
@@ -115,7 +116,7 @@ public abstract class ValidationServiceShaclPlugin implements ValidationService{
 				        	if(className.startsWith(".")) {
 				        		className = className.substring(1, className.length());
 				        		
-				        		report = executeClass(className, modelContent, report);
+				        		report = executeClass(className, modelContent, report, contentToValidate);
 				        	}
 			        	}
 					}
@@ -128,7 +129,7 @@ public abstract class ValidationServiceShaclPlugin implements ValidationService{
 						if(!className.contains("$1")) {
 							String classPackageName = resourceName.replace("/", ".") + "." + className.replace(".class", "");
 							
-			        		report = executeClass(classPackageName, modelContent, report);
+			        		report = executeClass(classPackageName, modelContent, report, contentToValidate);
 						}
 					}
 				}
@@ -155,10 +156,10 @@ public abstract class ValidationServiceShaclPlugin implements ValidationService{
 	 * @throws IllegalArgumentException
 	 * @throws InvocationTargetException
 	 */
-	private Report executeClass(String className, Model modelContent, Report report) throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {    	
+	private Report executeClass(String className, Model modelContent, Report report, File contentToValidate) throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {    	
 		Class<?> classe = Class.forName(className);
-		Constructor<?> constructor = classe.getConstructor(Model.class, Report.class);
-		Rules rule = (Rules)constructor.newInstance(modelContent, report);
+		Constructor<?> constructor = classe.getConstructor(Model.class, Report.class, File.class);
+		Rules rule = (Rules)constructor.newInstance(modelContent, report, contentToValidate);
 		
 		rule.validateRule();
 		

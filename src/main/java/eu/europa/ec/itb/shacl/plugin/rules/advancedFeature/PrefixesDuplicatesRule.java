@@ -1,5 +1,6 @@
 package eu.europa.ec.itb.shacl.plugin.rules.advancedFeature;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +34,7 @@ public class PrefixesDuplicatesRule extends JenaModelUtils  implements Rules {
 	private String ruleDescription = "A SHACL processor collects a set of prefix mappings as the union of all individual prefix mappings that are values of the SPARQL property path sh:prefixes/owl:imports*/sh:declare of the SPARQL-based constraint or validator. If such a collection of prefix declarations contains multiple namespaces for the same value of sh:prefix, then the shapes graph is ill-formed.";
 	private static String reportAssertionID = "http://www.w3.org/ns/shacl#declare";
 	
-	public PrefixesDuplicatesRule(Model currentModel, Report report) {		
+	public PrefixesDuplicatesRule(Model currentModel, Report report, File fileContent) {		
 		super(currentModel, report);
 		listPrefixes = new HashMap<>();
 	}

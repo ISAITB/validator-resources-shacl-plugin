@@ -1,5 +1,6 @@
 package eu.europa.ec.itb.shacl.plugin.rules.advancedFeature;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -39,7 +40,7 @@ public class PathPositionRule extends JenaModelUtils  implements Rules {
 	private String ruleDescription = "The only legal use of the variable PATH in the SPARQL queries of SPARQL-based constraints and SELECT-based validators is in the predicate position of a triple pattern.";
 	
 
-	public PathPositionRule(Model currentModel, Report report) {
+	public PathPositionRule(Model currentModel, Report report, File fileContent) {
 		super(currentModel, report);
 	}
 

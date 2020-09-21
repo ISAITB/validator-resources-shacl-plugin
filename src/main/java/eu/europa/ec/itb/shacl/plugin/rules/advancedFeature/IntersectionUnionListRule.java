@@ -1,5 +1,7 @@
 package eu.europa.ec.itb.shacl.plugin.rules.advancedFeature;
 
+import java.io.File;
+
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.NodeIterator;
 import org.apache.jena.rdf.model.RDFList;
@@ -24,7 +26,7 @@ public class IntersectionUnionListRule extends JenaModelUtils  implements Rules 
 	private String ruleDescriptionUnion = "Union expression is a blank node with exactly one value for the property sh:union. Union expression is a well-formed SHACL list with at least two members.";
 	
 
-	public IntersectionUnionListRule(Model currentModel, Report report) {
+	public IntersectionUnionListRule(Model currentModel, Report report, File fileContent) {
 		super(currentModel, report);
 	}
 

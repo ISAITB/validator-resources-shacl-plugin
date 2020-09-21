@@ -1,5 +1,7 @@
 package eu.europa.ec.itb.shacl.plugin.rules.bestPractice;
 
+import java.io.File;
+
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFList;
 import org.apache.jena.rdf.model.ResIterator;
@@ -23,7 +25,7 @@ public class ListRule extends JenaModelUtils  implements Rules {
 	private String ruleDescription = "Avoid large rdf:list due to its innefficiency.";
 	
 
-	public ListRule(Model currentModel, Report report) {
+	public ListRule(Model currentModel, Report report, File fileContent) {
 		super(currentModel, report);
 	}
 

@@ -1,5 +1,6 @@
 package eu.europa.ec.itb.shacl.plugin.rules.bestPractice;
 
+import java.io.File;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
@@ -31,7 +32,7 @@ public class DefaultValueDatatypeRule extends JenaModelUtils  implements Rules {
 	private String ruleDescription = "The value type of the sh:defaultValue should align with the specified sh:datatype or sh:class of the same shape.";
 	
 
-	public DefaultValueDatatypeRule(Model currentModel, Report report) {
+	public DefaultValueDatatypeRule(Model currentModel, Report report, File fileContent) {
 		super(currentModel, report);
 	}
 

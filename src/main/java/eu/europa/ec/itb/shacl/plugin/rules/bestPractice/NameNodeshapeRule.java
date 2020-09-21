@@ -1,5 +1,7 @@
 package eu.europa.ec.itb.shacl.plugin.rules.bestPractice;
 
+import java.io.File;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.Model;
@@ -27,7 +29,7 @@ public class NameNodeshapeRule extends JenaModelUtils  implements Rules {
 	private String targetClassProperty = shaclNamespace + "targetClass";
 	private String localName = "Shape";
 	
-	public NameNodeshapeRule(Model currentModel, Report report) {		
+	public NameNodeshapeRule(Model currentModel, Report report, File fileContent) {		
 		super(currentModel, report);
 	}
 

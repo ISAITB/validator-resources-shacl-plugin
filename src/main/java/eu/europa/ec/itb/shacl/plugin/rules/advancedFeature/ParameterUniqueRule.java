@@ -1,5 +1,6 @@
 package eu.europa.ec.itb.shacl.plugin.rules.advancedFeature;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class ParameterUniqueRule extends JenaModelUtils  implements Rules {
 	private String ruleDescription = "A constraint component where two or more parameter declarations use the same parameter names is ill-formed.";
 	private static String reportAssertionID = "http://www.w3.org/ns/shacl#path";
 	
-	public ParameterUniqueRule(Model currentModel, Report report) {		
+	public ParameterUniqueRule(Model currentModel, Report report, File fileContent) {		
 		super(currentModel, report);
 	}
 

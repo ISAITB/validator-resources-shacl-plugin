@@ -1,5 +1,6 @@
 package eu.europa.ec.itb.shacl.plugin.rules.advancedFeature;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -34,7 +35,7 @@ public class PreBindingLimitationsRule extends JenaModelUtils  implements Rules 
 	private String ruleDescription = "Subqueries must return all potentially pre-bound variables, except shapesGraph and currentShape which are optional as already mentioned in 5.3.1 Pre-bound Variables in SPARQL Constraints ($this, $shapesGraph, $currentShape).";
 	
 
-	public PreBindingLimitationsRule(Model currentModel, Report report) {
+	public PreBindingLimitationsRule(Model currentModel, Report report, File fileContent) {
 		super(currentModel, report);
 	}
 
