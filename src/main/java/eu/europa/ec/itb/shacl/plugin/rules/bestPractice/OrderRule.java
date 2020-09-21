@@ -84,13 +84,17 @@ public class OrderRule extends JenaModelUtils  implements Rules {
         boolean ascendent = true;
         int j=0;
         if(nodelist.getLength()>1) {
-			int first = Integer.parseInt(nodelist.item(0).getTextContent());
-			int last = Integer.parseInt(nodelist.item(nodelist.getLength()-1).getTextContent());
-			
-			if(first>last) {
-				ascendent = false;
-				order = first+1;
-			}
+        	try {
+				int first = Integer.parseInt(nodelist.item(0).getTextContent());
+				int last = Integer.parseInt(nodelist.item(nodelist.getLength()-1).getTextContent());
+				
+				if(first>last) {
+					ascendent = false;
+					order = first+1;
+				}
+        	}catch(Exception e) {
+        		ordered = false;
+        	}
         }
         while(j<nodelist.getLength() && ordered){
 			Node orderNode = nodelist.item(j);
