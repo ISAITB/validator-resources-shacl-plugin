@@ -23,7 +23,7 @@ class ShaclPluginTest {
 	
 	@Test
 	void getModulePlugin() {
-		ValidationServiceShaclPlugin service = new ValidationServiceShaclPlugin();
+		ValidationServiceShaclPlugin service = new ValidationServiceBestPracticesShaclPlugin();
 		
 		GetModuleDefinitionResponse resp = service.getModuleDefinition(null);
 		
@@ -36,7 +36,7 @@ class ShaclPluginTest {
 	void initPlugin() {
 		String inputFile = "Extended_SPARQL Examples.ttl";
 		
-		ValidationServiceShaclPlugin service = new ValidationServiceShaclPlugin();
+		ValidationServiceShaclPlugin service = new ValidationServiceBestPracticesShaclPlugin();
 		
 		ValidateRequest req = new ValidateRequest();
 		
