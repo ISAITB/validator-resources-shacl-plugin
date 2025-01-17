@@ -3,8 +3,8 @@ package eu.europa.ec.itb.shacl.plugin.rules.advancedFeature;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.NodeIterator;
 import org.apache.jena.rdf.model.Property;
@@ -25,13 +25,13 @@ import eu.europa.ec.itb.shacl.plugin.utils.JenaModelUtils;
  *
  */
 public class NodeExpressionRecursionRule extends JenaModelUtils  implements Rules {	
-	private static String filterShapeProperty = shaclNamespace + "filterShape";
-	private static String nodeProperty = shaclNamespace + "nodes";
-	private static String pathProperty = shaclNamespace + "path";
-	private static String thisProperty = shaclNamespace + "this";
+
+	private static final String filterShapeProperty = shaclNamespace + "filterShape";
+	private static final String nodeProperty = shaclNamespace + "nodes";
+	private static final String pathProperty = shaclNamespace + "path";
+	private static final String thisProperty = shaclNamespace + "this";
 	
-	private String ruleDescription = "A node expression cannot recursively have itself as a \"nested\" node expression, e.g. as value of sh:nodes.";
-	
+	private final String ruleDescription = "A node expression cannot recursively have itself as a \"nested\" node expression, e.g. as value of sh:nodes.";
 
 	public NodeExpressionRecursionRule(Model currentModel, Report report, File fileContent) {
 		super(currentModel, report);
@@ -73,16 +73,14 @@ public class NodeExpressionRecursionRule extends JenaModelUtils  implements Rule
 	 * @param listFS
 	 */
 	private void getTripleProperty(List<Statement> listFS) {		
-		for(Statement statement : listFS){
-			boolean recursive = false;
-			
-			if(StringUtils.equals(statement.getPredicate().toString(), statement.getObject().toString())) {
+		for (Statement statement: listFS){
+			boolean recursive;
+			if (Objects.equals(statement.getPredicate().toString(), statement.getObject().toString())) {
 				recursive = true;
-			}else {
+			} else {
 				recursive = isRecursive(statement.getSubject(), statement.getObject());
 			}
-			
-			if(recursive) {
+			if (recursive) {
 				String shape = getMainShape(statement.getObject().asResource()).toString();
 				report.setErrorItem(ruleDescription, statement.getPredicate().toString(), shape, null,shape);						
 			}
@@ -108,19 +106,16 @@ public class NodeExpressionRecursionRule extends JenaModelUtils  implements Rule
 				
 				if(statement.getPredicate().isURIResource()) {
 					String uriResource = statement.getPredicate().getURI();
-
-					if(StringUtils.equals(originalObject.toString(), uriResource)) {
+					if (Objects.equals(originalObject.toString(), uriResource)) {
 						return true;
 					}
-					
-					if(StringUtils.contains(uriResource, shaclNamespace)) {
+					if (uriResource != null && uriResource.contains(shaclNamespace)) {
 						return false;
 					}
 					recursive = isRecursive(statement.getSubject(), originalObject);
 				}
 			}
 		}
-		
 		return recursive;
 	}
 	

@@ -4,8 +4,8 @@ import java.io.File;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
+import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
@@ -44,7 +44,7 @@ public class DefaultValueDatatypeRule extends JenaModelUtils  implements Rules {
     	ResIterator itSubjects = this.currentModel.listResourcesWithProperty(defaultValueProperty);
     	
     	while(itSubjects.hasNext()) {
-    		boolean ruleOK = true;
+    		boolean ruleOK;
     		Resource subject = itSubjects.next();
     		
     		ruleOK = validateDefaultValue(subject, defaultValueProperty, datatypeProperty, classProperty);
@@ -100,33 +100,29 @@ public class DefaultValueDatatypeRule extends JenaModelUtils  implements Rules {
 	 */
 	private boolean getDatatypesAlignment(List<RDFNode> rdfNodes, RDFNode defaultValue) {
 		boolean isAligned = true;
-		
-		if(!rdfNodes.isEmpty()) {
+		if (!rdfNodes.isEmpty()) {
 			String node = rdfNodes.get(0).toString();
-			String value = StringUtils.lowerCase(defaultValue.asLiteral().getString());
-			
+			String value = defaultValue.asLiteral().getString().toLowerCase();
 			try {
-				if(StringUtils.equals(node, "xsd:decimal") || StringUtils.contains(node, "int") || StringUtils.contains(node, "long") || StringUtils.contains(node, "short")){
+				if (Objects.equals(node, "xsd:decimal") || node.contains("int") || node.contains("long") || node.contains("short")){
 					Integer.valueOf(value);
 				}
-				if(StringUtils.contains(node, "byte")){
+				if (node.contains("byte")){
 					Byte.valueOf(value);
 				}
-				if(StringUtils.contains(node, "boolean")){
+				if (node.contains("boolean")){
 					Boolean.valueOf(value);
 				}
-				if(StringUtils.contains(node, "date")){
+				if (node.contains("date")){
 					Date.valueOf(value);
 				}
-				if(StringUtils.contains(node, "time")){
+				if (node.contains("time")){
 					Time.valueOf(value);
 				}
-				
-			}catch(Exception e) {
+			} catch (Exception e) {
 				isAligned = false;
 			}
 		}		
-		
 		return isAligned;
 	}
 
@@ -138,11 +134,7 @@ public class DefaultValueDatatypeRule extends JenaModelUtils  implements Rules {
 	 * 		returns boolean
 	 */
 	private boolean getClassesAlignment(List<RDFNode> rdfNodes, RDFNode defaultValue) {
-		if(!rdfNodes.isEmpty() && !rdfNodes.get(0).equals(defaultValue)) {
-			return false;
-		}
-		
-		return true;
-	}
+        return rdfNodes.isEmpty() || rdfNodes.get(0).equals(defaultValue);
+    }
 	
 }

@@ -20,6 +20,7 @@ import com.gitb.tr.ValidationCounters;
  *
  */
 public class Report {
+
     private static final com.gitb.tr.ObjectFactory objectFactory = new ObjectFactory();
     
 	List<JAXBElement<TestAssertionReportType>> items;
