@@ -10,6 +10,7 @@
         <version.gitbTypes>1.25.1</version.gitbTypes>
         <version.slf4jApi>1.7.12</version.slf4jApi>
         <version.jena>5.2.0</version.jena>
+        <version.commonsLang>3.18.0</version.commonsLang>
         <!-- Plugin versions -->
         <version.plugin.mavenAssemblyPlugin>3.3.0</version.plugin.mavenAssemblyPlugin>
         <version.plugin.mavenCompilerPlugin>3.8.1</version.plugin.mavenCompilerPlugin>
@@ -70,22 +71,44 @@
             </plugin>
         </plugins>
     </build>
-  
-  <dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>eu.europa.ec.itb</groupId>
+                <artifactId>gitb-types</artifactId>
+                <version>${version.gitbTypes}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${version.slf4jApi}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.jena</groupId>
+                <artifactId>jena-arq</artifactId>
+                <version>${version.jena}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${version.commonsLang}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
         <dependency>
             <groupId>eu.europa.ec.itb</groupId>
             <artifactId>gitb-types</artifactId>
-            <version>${version.gitbTypes}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${version.slf4jApi}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-arq</artifactId>
-            <version>${version.jena}</version>
         </dependency>
   </dependencies>
 </project>
