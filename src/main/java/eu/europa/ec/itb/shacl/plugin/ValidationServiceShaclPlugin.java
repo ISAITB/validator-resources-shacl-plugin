@@ -54,7 +54,6 @@ public abstract class ValidationServiceShaclPlugin implements ValidationService{
 	}
 
 	public ValidationResponse validate(ValidateRequest validateRequest) {
-        LOG.info("Starting plugin validation");
         // Validate input data.
 		validateTempFolder(validateRequest);
 		File contentToValidate = validateContentToValidate(validateRequest);
@@ -62,7 +61,6 @@ public abstract class ValidationServiceShaclPlugin implements ValidationService{
 		Model modelContent = getModel(contentToValidate);
 		Report report = executeRuleValidations(modelContent, contentToValidate);
         response.setReport(report.generateReport());
-        LOG.info("Ending plugin validation");
 		return response;
 	}
 	
