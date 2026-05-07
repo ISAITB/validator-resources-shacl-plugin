@@ -12,9 +12,9 @@
         <version.gitbTypes>1.25.1</version.gitbTypes>
         <version.jena>5.6.0</version.jena>
         <!-- Plugin versions -->
-        <version.plugin.mavenAssemblyPlugin>3.3.0</version.plugin.mavenAssemblyPlugin>
-        <version.plugin.mavenCompilerPlugin>3.8.1</version.plugin.mavenCompilerPlugin>
-        <version.plugin.dependencyCheckPlugin>12.2.1</version.plugin.dependencyCheckPlugin>
+        <version.plugin.mavenAssemblyPlugin>3.8.0</version.plugin.mavenAssemblyPlugin>
+        <version.plugin.mavenCompilerPlugin>3.15.0</version.plugin.mavenCompilerPlugin>
+        <version.plugin.dependencyCheckPlugin>12.2.2</version.plugin.dependencyCheckPlugin>
     </properties>
     
     <build>
