@@ -58,9 +58,16 @@ public abstract class ValidationServiceShaclPlugin implements ValidationService{
 		validateTempFolder(validateRequest);
 		File contentToValidate = validateContentToValidate(validateRequest);
 		ValidationResponse response = new ValidationResponse();
-		Model modelContent = getModel(contentToValidate);
-		Report report = executeRuleValidations(modelContent, contentToValidate);
-        response.setReport(report.generateReport());
+		Model modelContent = null;
+		try {
+			modelContent = getModel(contentToValidate);
+			Report report = executeRuleValidations(modelContent, contentToValidate);
+			response.setReport(report.generateReport());
+		} finally {
+			if (modelContent != null && !modelContent.isClosed()) {
+				modelContent.close();
+			}
+		}
 		return response;
 	}
 	

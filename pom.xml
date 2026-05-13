@@ -10,7 +10,9 @@
         <ossIndexPassword>ossIndexPassword</ossIndexPassword>
         <!-- Library versions -->
         <version.gitbTypes>1.25.1</version.gitbTypes>
-        <version.jena>5.6.0</version.jena>
+        <version.jena>6.1.0</version.jena>
+        <!-- Ensure the libthrift version matches the one used within Jena. -->
+        <version.libthrift>0.23.0</version.libthrift>
         <!-- Plugin versions -->
         <version.plugin.mavenAssemblyPlugin>3.8.0</version.plugin.mavenAssemblyPlugin>
         <version.plugin.mavenCompilerPlugin>3.15.0</version.plugin.mavenCompilerPlugin>
@@ -85,6 +87,11 @@
                 <groupId>org.apache.jena</groupId>
                 <artifactId>jena-arq</artifactId>
                 <version>${version.jena}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.thrift</groupId>
+                <artifactId>libthrift</artifactId>
+                <version>${version.libthrift}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
