@@ -3,17 +3,15 @@ package eu.europa.ec.itb.shacl.plugin;
 
 import com.gitb.core.AnyContent;
 import com.gitb.core.ValidationModule;
-import com.gitb.vs.Void;
 import com.gitb.vs.*;
+import com.gitb.vs.Void;
 import eu.europa.ec.itb.shacl.plugin.error.PluginException;
 import eu.europa.ec.itb.shacl.plugin.utils.PluginConstants;
-import org.apache.jena.graph.GraphMemFactory;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFLanguages;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.jena.riot.RDFParserBuilder;
+import org.apache.jena.sys.InitJenaCore;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,9 +32,8 @@ import java.util.ArrayList;
  */
 public abstract class ValidationServiceShaclPlugin implements ValidationService{
 
-    private static final Logger LOG = LoggerFactory.getLogger(ValidationServiceShaclPlugin.class);
 	protected static final String packageBPName = "eu/europa/ec/itb/shacl/plugin/rules/bestPractice";
-	protected static final String packagAFeName = "eu/europa/ec/itb/shacl/plugin/rules/advancedFeature";
+	protected static final String packageAFName = "eu/europa/ec/itb/shacl/plugin/rules/advancedFeature";
 	private final ArrayList<String> packageName;
 
 	public ValidationServiceShaclPlugin() {
@@ -54,6 +51,8 @@ public abstract class ValidationServiceShaclPlugin implements ValidationService{
 	}
 
 	public ValidationResponse validate(ValidateRequest validateRequest) {
+		// Make sure Jena is initialised.
+		InitJenaCore.init();
         // Validate input data.
 		validateTempFolder(validateRequest);
 		File contentToValidate = validateContentToValidate(validateRequest);
@@ -159,10 +158,12 @@ public abstract class ValidationServiceShaclPlugin implements ValidationService{
 	private Model getModel(File contentToValidate) {
 		Lang lang = RDFLanguages.contentTypeToLang(RDFLanguages.guessContentType(contentToValidate.getName()));
         try (InputStream dataStream = new FileInputStream(contentToValidate)) {
-        	// Read the model
-            Model fileModel = ModelFactory.createModelForGraph(GraphMemFactory.createDefaultGraph());
-            fileModel.read(dataStream, null, lang.getName());
-            return fileModel;
+			// Read the model
+            return RDFParserBuilder
+                    .create()
+                    .lang(lang)
+                    .source(dataStream)
+                    .build().toModel();
         } catch (IOException e) {
             throw new PluginException("An error occurred while reading a SHACL file.", e);
         }        

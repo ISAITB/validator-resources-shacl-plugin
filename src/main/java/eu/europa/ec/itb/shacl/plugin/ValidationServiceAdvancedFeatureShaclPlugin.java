@@ -12,6 +12,6 @@ public class ValidationServiceAdvancedFeatureShaclPlugin extends ValidationServi
     
 	public ValidationServiceAdvancedFeatureShaclPlugin() {
 		super();
-		setPackageName(packagAFeName);
+		setPackageName(packageAFName);
 	}
 }

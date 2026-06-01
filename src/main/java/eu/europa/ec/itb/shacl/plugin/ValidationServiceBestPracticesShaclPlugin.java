@@ -13,6 +13,6 @@ public class ValidationServiceBestPracticesShaclPlugin extends ValidationService
 	public ValidationServiceBestPracticesShaclPlugin() {
 		super();
 		setPackageName(packageBPName);
-		setPackageName(packagAFeName);
+		setPackageName(packageAFName);
 	}
 }
